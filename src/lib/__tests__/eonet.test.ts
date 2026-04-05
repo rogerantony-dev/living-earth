@@ -39,7 +39,7 @@ describe("fetchEvents", () => {
 
     const events = await fetchEvents();
     expect(fetch).toHaveBeenCalledWith(
-      "https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=100"
+      "https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=1000"
     );
     expect(events).toHaveLength(1);
     expect(events[0].title).toBe("Wildfire - California");
@@ -56,7 +56,7 @@ describe("fetchEvents", () => {
 
     await fetchEvents({ start: "2025-01-01", end: "2025-01-31", status: "all" });
     expect(fetch).toHaveBeenCalledWith(
-      "https://eonet.gsfc.nasa.gov/api/v3/events?status=all&limit=100&start=2025-01-01&end=2025-01-31"
+      "https://eonet.gsfc.nasa.gov/api/v3/events?status=all&limit=1000&start=2025-01-01&end=2025-01-31"
     );
   });
 

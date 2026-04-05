@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { filterByCategories, filterByDate } from "../filters";
+import { filterByCategories, filterByDate, filterByDateRange } from "../filters";
 import { EonetEvent } from "../types";
 
 const makeEvent = (
@@ -70,5 +70,35 @@ describe("filterByDate", () => {
   it("includes all events when target date is after all geometry dates", () => {
     const result = filterByDate(events, "2025-02-01");
     expect(result).toHaveLength(3);
+  });
+});
+
+describe("filterByDateRange", () => {
+  const events = [
+    makeEvent("1", "wildfires", ["2025-01-05", "2025-01-10"]),
+    makeEvent("2", "severeStorms", ["2025-01-08"], "2025-01-12"),
+    makeEvent("3", "volcanoes", ["2025-01-15"]),
+    makeEvent("4", "landslides", ["2025-01-01", "2025-01-03"]),
+  ];
+
+  it("includes events that overlap with the range", () => {
+    const result = filterByDateRange(events, "2025-01-06", "2025-01-09");
+    expect(result.map((e) => e.id).sort()).toEqual(["1", "2"]);
+  });
+
+  it("excludes events entirely outside the range", () => {
+    const result = filterByDateRange(events, "2025-01-06", "2025-01-09");
+    expect(result.find((e) => e.id === "3")).toBeUndefined();
+    expect(result.find((e) => e.id === "4")).toBeUndefined();
+  });
+
+  it("includes events that start before but extend into the range", () => {
+    const result = filterByDateRange(events, "2025-01-09", "2025-01-20");
+    expect(result.map((e) => e.id).sort()).toEqual(["1", "2", "3"]);
+  });
+
+  it("returns all events when range covers everything", () => {
+    const result = filterByDateRange(events, "2025-01-01", "2025-01-31");
+    expect(result).toHaveLength(4);
   });
 });
