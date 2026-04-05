@@ -29,31 +29,41 @@ export async function fetchEvents(
 }
 
 /**
- * Fetch events for a date range, chunking into monthly windows
- * to avoid hitting the API's 1000-event limit per request.
- * Deduplicates by event ID across chunks.
+ * Fetch events for a date range. Tries a single request first.
+ * Only chunks into monthly windows if the single request hits
+ * the 1000-event limit (meaning data was likely truncated).
  */
 export async function fetchEventsForRange(
   start: string,
   end: string
 ): Promise<EonetEvent[]> {
+  // Try a single request first
+  const initial = await fetchEvents({
+    status: "all",
+    limit: 1000,
+    start,
+    end,
+  });
+
+  // If under the limit, we got everything — done
+  if (initial.length < 1000) {
+    return initial;
+  }
+
+  // Hit the limit — chunk into monthly windows to get complete data
   const startDate = new Date(start + "T00:00:00Z");
   const endDate = new Date(end + "T00:00:00Z");
 
-  // Build monthly chunks
   const chunks: { start: string; end: string }[] = [];
   const cursor = new Date(startDate);
   while (cursor < endDate) {
     const chunkStart = cursor.toISOString().split("T")[0];
     cursor.setMonth(cursor.getMonth() + 1);
     const chunkEnd =
-      cursor >= endDate
-        ? end
-        : cursor.toISOString().split("T")[0];
+      cursor >= endDate ? end : cursor.toISOString().split("T")[0];
     chunks.push({ start: chunkStart, end: chunkEnd });
   }
 
-  // Fetch all chunks in parallel (max ~6 concurrent to be nice to the API)
   const BATCH_SIZE = 6;
   const seen = new Set<string>();
   const allEvents: EonetEvent[] = [];
