@@ -18,19 +18,20 @@ export default function DetailPanel({ event, onClose }: DetailPanelProps) {
   const worldviewUrl = buildWorldviewUrl(lon, lat, dateStr);
 
   return (
-    <div className="w-[300px] border-l border-[var(--border-subtle)] bg-[var(--bg-surface)] p-5 overflow-y-auto animate-slide-in">
-      <div className="flex items-center justify-between mb-3">
+    <div className="absolute right-0 top-0 bottom-0 w-[300px] border-l border-[var(--border-subtle)] bg-[var(--bg-primary)] animate-slide-in z-20 flex flex-col">
+      <div className="sticky top-0 flex items-center justify-between p-5 pb-3 bg-[var(--bg-primary)] z-10">
         <span className="text-[11px] uppercase tracking-widest text-[var(--text-muted)]">
           Event Details
         </span>
         <button
           onClick={onClose}
-          className="text-[var(--text-muted)] hover:text-white text-lg leading-none"
+          className="text-[var(--text-muted)] hover:text-white text-lg leading-none cursor-pointer"
         >
           ×
         </button>
       </div>
 
+      <div className="flex-1 overflow-y-auto px-5 pb-5">
       <div className="flex items-center gap-2 mb-4">
         <div
           className="w-2.5 h-2.5 rounded-full"
@@ -111,6 +112,7 @@ export default function DetailPanel({ event, onClose }: DetailPanelProps) {
       >
         View in NASA Worldview →
       </a>
+      </div>
     </div>
   );
 }

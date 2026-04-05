@@ -193,39 +193,36 @@ export default function Home() {
         <TopBar eventCount={visibleEvents.length} lastUpdated={lastUpdated} />
       </div>
 
-      <div className="flex flex-1 min-h-0 relative z-0">
-        <div className="flex-1 relative overflow-hidden">
-          <GlobeView
-            events={visibleEvents}
-            onEventClick={setSelectedEvent}
-            onEventHover={() => {}}
+      <div className="flex-1 min-h-0 relative z-0 overflow-hidden">
+        <GlobeView
+          events={visibleEvents}
+          onEventClick={setSelectedEvent}
+          onEventHover={() => {}}
+        />
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
+          <CategoryFilters
+            activeCategories={activeCategories}
+            categoryCounts={categoryCounts}
+            onToggle={handleToggleCategory}
           />
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
-            <CategoryFilters
-              activeCategories={activeCategories}
-              categoryCounts={categoryCounts}
-              onToggle={handleToggleCategory}
-            />
-          </div>
-          {fetching && (
-            <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10">
-              <div className="flex items-center gap-2 bg-[var(--bg-primary)] border border-[var(--border-subtle)] px-3 py-1.5 rounded-full">
-                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                <span className="text-[11px] text-[var(--text-muted)]">
-                  Fetching events...
-                </span>
-              </div>
-            </div>
-          )}
-          {visibleEvents.length === 0 && !loading && !fetching && (
-            <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-              <p className="text-sm text-[var(--text-muted)] bg-[var(--bg-primary)] px-4 py-2 rounded-lg">
-                No events match current filters
-              </p>
-            </div>
-          )}
         </div>
-
+        {fetching && (
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10">
+            <div className="flex items-center gap-2 bg-[var(--bg-primary)] border border-[var(--border-subtle)] px-3 py-1.5 rounded-full">
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+              <span className="text-[11px] text-[var(--text-muted)]">
+                Fetching events...
+              </span>
+            </div>
+          </div>
+        )}
+        {visibleEvents.length === 0 && !loading && !fetching && (
+          <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+            <p className="text-sm text-[var(--text-muted)] bg-[var(--bg-primary)] px-4 py-2 rounded-lg">
+              No events match current filters
+            </p>
+          </div>
+        )}
         <DetailPanel
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
