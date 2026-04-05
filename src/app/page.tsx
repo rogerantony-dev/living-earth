@@ -97,6 +97,13 @@ export default function Home() {
               onToggle={handleToggleCategory}
             />
           </div>
+          {filteredEvents.length === 0 && !loading && (
+            <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+              <p className="text-sm text-[var(--text-muted)] bg-[var(--bg-primary)] px-4 py-2 rounded-lg">
+                No events match current filters
+              </p>
+            </div>
+          )}
         </div>
 
         <DetailPanel
